@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Diary Assist Buddy (Demo)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --purple: #6b63ff;
+      --bg: #f3f6ff;
+      --card-bg: #ffffff;
+      --border: #d7ddff;
+      --accent: #ffb547;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 12px 40px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #eef1ff 0, #f6f8ff 40%, #ffffff 100%);
+      display: flex;
+      justify-content: center;
+    }
+    .frame {
+      width: 100%;
+      max-width: 480px;
+    }
+    .header-chip {
+      background: #fff;
+      border-radius: 999px;
+      padding: 10px 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      margin-bottom: 10px;
+    }
+    .header-chip span.icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffda7b, #ff9c6c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .header-chip span.title {
+      font-weight: 700;
+      font-size: 16px;
+      color: #444;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #5f6ac9;
+      margin-bottom: 18px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 26px;
+      padding: 20px 18px 22px;
+      box-shadow: 0 16px 30px rgba(67, 88, 168, 0.18);
+    }
+    h2 {
+      font-size: 18px;
+      margin: 0 0 6px;
+      color: #4350b5;
+      text-align: center;
+    }
+    h2 span {
+      font-size: 18px;
+    }
+    .section-caption {
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #444;
+    }
+    .hint {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+    select, textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 9px 11px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      background: #fbfcff;
+      margin-bottom: 12px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    .tone-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .tone-chip {
+      border-radius: 999px;
+      border: 1px solid #d3d7ff;
+      padding: 6px 10px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f6f7ff;
+      cursor: pointer;
+      color: #555;
+    }
+    .tone-chip span.icon {
+      font-size: 14px;
+    }
+    .tone-chip.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+    .tone-chip.active span.icon {
+      transform: translateY(-1px);
+    }
+    button {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      padding: 11px 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, #6b63ff, #a16bff);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 20px rgba(83, 76, 194, 0.4);
+    }
+    button:disabled {
+      opacity: 0.7;
+      cursor: default;
+      box-shadow: none;
+    }
+    button span.icon {
+      font-size: 16px;
+    }
+    .result-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .result-card {
+      border-radius: 18px;
+      padding: 12px 12px 14px;
+      background: #f7f7ff;
+      border: 1px solid #e0e2ff;
+      min-height: 70px;
+      font-size: 13px;
+      color: #333;
+      white-space: pre-wrap;
+    }
+    .result-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #5a64c0;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .result-title span.icon {
+      font-size: 14px;
+    }
+    .advice-item {
+      border-radius: 14px;
+      padding: 9px 10px;
+      background: #fff;
+      border: 1px dashed #d9ddff;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .advice-label {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .advice-before {
+      color: #999;
+      margin-bottom: 2px;
+    }
+    .advice-after {
+      color: #444;
+      margin-bottom: 2px;
+    }
+    .advice-comment {
+      color: #777;
+      font-size: 11px;
+    }
+    .footer-note {
+      font-size: 10px;
+      color: #aaa;
+      margin-top: 10px;
+      text-align: center;
+    }
+    @media (max-width: 400px) {
+      .card { padding: 18px 14px 20px; }
+      .header-chip { padding: 8px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="header-chip">
+      <span class="icon">📝</span>
+      <span class="title">Diary Assist Buddy</span>
+    </div>
+    <div class="subtitle">今日の出来事をいっしょに日記にまとめるデモ版アプリ</div>
+
+    <div class="card">
+      <h2>✨ 日記のじゅんび ✨</h2>
+      <div class="section-caption">学年と今日の出来事・気持ちを入れると、サンプルの日記文をつくります。</div>
+
+      <label for="grade">学年（がくねん）</label>
+      <select id="grade">
+        <option value="小1">小1</option>
+        <option value="小2">小2</option>
+        <option value="小3">小3</option>
+        <option value="小4">小4</option>
+        <option value="小5">小5</option>
+        <option value="小6">小6</option>
+      </select>
+
+      <label>文体（ぶんたい）</label>
+      <div class="hint">読みやすさや、ふんいきに合わせてえらびます。</div>
+      <div class="tone-chips" id="toneChips">
+        <div class="tone-chip active" data-tone="シンプル"><span class="icon">📘</span>シンプル</div>
+        <div class="tone-chip" data-tone="丁寧"><span class="icon">🌿</span>丁寧</div>
+        <div class="tone-chip" data-tone="かわいい"><span class="icon">💫</span>かわいい</div>
+      </div>
+
+      <label for="event">出来事（なにをしたの？）</label>
+      <div class="hint">例：今日は学校の帰りに公園で友だちと鬼ごっこをしました。</div>
+      <textarea id="event"></textarea>
+
+      <label for="feeling">思ったこと（どう思った？）</label>
+      <div class="hint">例：たくさん走ってくたくたになったけど、とても楽しかったです。</div>
+      <textarea id="feeling"></textarea>
+
+      <button id="generateBtn">
+        <span class="icon">🚀</span>
+        日記案をつくる（デモ）
+      </button>
+
+      <div class="result-wrapper">
+        <div class="result-card" id="resultDiary">
+          <div class="result-title"><span class="icon">📗</span>日記の下書き（Sample）</div>
+          <div id="diaryText">
+きょうの出来事を入れて「日記案をつくる」ボタンを押すと、ここにサンプルの日記が表示されます。
+          </div>
+        </div>
+
+        <div class="result-card" id="resultAdvice">
+          <div class="result-title"><span class="icon">💡</span>ことばのアドバイス（Sample）</div>
+          <div id="adviceList">
+            文章を少しだけ良くするためのヒントを、いくつか表示します。
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        ※ このページは GitHub Pages 用のデモ版です。文の生成は、かんたんなルールで行っています。
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // トーン選択
+    const toneChips = document.querySelectorAll(".tone-chip");
+    let currentTone = "シンプル";
+    toneChips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        toneChips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        currentTone = chip.dataset.tone;
+      });
+    });
+
+    function buildDiary(grade, tone, eventText, feeling) {
+      const ev = eventText || "今日は学校の帰りに公園で友だちと遊びました。";
+      const fe = feeling || "たくさん走って少しつかれたけれど、とても楽しかったです。";
+
+      let intro = "";
+      let tail = "";
+
+      // 学年別のしめ方
+      switch (grade) {
+        case "小1":
+        case "小2":
+          tail = "またこんな一日になるといいなと思いました。";
+          break;
+        case "小3":
+        case "小4":
+          tail = "この経験をとおして、また友だちとあそびたいと思いました。";
+          break;
+        case "小5":
+        case "小6":
+          tail = "この一日を通して、友だちと過ごす時間の大切さをあらためて感じました。";
+          break;
+      }
+
+      // 文体別
+      if (tone === "シンプル") {
+        intro = "きょうは、" + ev + "。\n" + fe;
+      } else if (tone === "丁寧") {
+        intro = "今日は、" + ev + "。\n" + fe.replace(/です。?$/, "でした。");
+      } else { // かわいい
+        intro = "きょうは " + ev + "よ。\n" + fe.replace(/です。?$/, "だったよ。");
+      }
+
+      return `▼日記（${grade}・${tone}）\n${intro}\n\n${tail}`;
+    }
+
+    function buildAdvice(eventText, feeling) {
+      const advs = [];
+      const hasTanoshii = /楽しかった/.test(feeling);
+      const hasSugoi = /すごかった|すごく|とても/.test(feeling);
+
+      if (hasTanoshii) {
+        advs.push({
+          label: "「楽しかった」をもう一歩くわしく",
+          before: feeling,
+          after: feeling.replace("楽しかった", "友だちとたくさん走り回れて楽しかった"),
+          comment: "「なにが」楽しかったかを書くと、よんだ人にようすが伝わります。"
+        });
+      }
+      if (!eventText) {
+        advs.push({
+          label: "出来事をもう少しだけ",
+          before: "（出来事が空白）",
+          after: "きょう、学校の帰りに公園で友だちとあそびました。",
+          comment: "どこで・だれと・なにをしたかを一文で書いてみるのがおすすめです。"
+        });
+      }
+      if (!hasSugoi && feeling) {
+        advs.push({
+          label: "気持ちをふやしてみる",
+          before: feeling,
+          after: feeling + "　とてもわくわくした気持ちになりました。",
+          comment: "最後に気持ちを一言付け足すと、読み手に心のようすが伝わります。"
+        });
+      }
+
+      if (advs.length === 0) {
+        return `<div class="advice-item">
+  <div class="advice-label">今日はそのままでもすてきな日記になっています。</div>
+  <div class="advice-comment">書けたことをほめてあげる時間もたいせつにしたいですね。</div>
+</div>`;
+      }
+
+      return advs.map(a => `
+<div class="advice-item">
+  <div class="advice-label">・${a.label}</div>
+  <div class="advice-before">Before：${a.before}</div>
+  <div class="advice-after">After：${a.after}</div>
+  <div class="advice-comment">${a.comment}</div>
+</div>
+`).join("");
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      const grade = document.getElementById("grade").value;
+      const ev = document.getElementById("event").value.trim();
+      const fe = document.getElementById("feeling").value.trim();
+
+      const diary = buildDiary(grade, currentTone, ev, fe);
+      const adviceHtml = buildAdvice(ev, fe);
+
+      document.getElementById("diaryText").textContent = diary;
+      document.getElementById("adviceList").innerHTML = adviceHtml;
+    });
+  </script>
+</body>
+</html>
